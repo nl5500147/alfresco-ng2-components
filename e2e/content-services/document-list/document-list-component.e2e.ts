@@ -91,6 +91,8 @@ describe('Document List Component', () => {
 
         afterAll(async (done) => {
             await this.alfrescoJsApi.core.sitesApi.deleteSite(privateSite.entry.id);
+            navBar.openLanguageMenu();
+            navBar.chooseLanguage('English');
             done();
         });
 
@@ -178,8 +180,12 @@ describe('Document List Component', () => {
             done();
         });
 
+        beforeEach(async (done) => {
+            await loginPage.loginToContentServicesUsingUserModel(acsUser);
+            done();
+        });
+
         it('[C279926] Should only display the user\'s files and folders', () => {
-            loginPage.loginToContentServicesUsingUserModel(acsUser);
             contentServicesPage.goToDocumentList();
             contentServicesPage.checkContentIsDisplayed(folderName);
             contentServicesPage.checkContentIsDisplayed(pdfFileModel.name);
@@ -188,7 +194,6 @@ describe('Document List Component', () => {
         });
 
         it('[C279927] Should display default columns', () => {
-            loginPage.loginToContentServicesUsingUserModel(acsUser);
             contentServicesPage.goToDocumentList();
             contentServicesPage.checkColumnNameHeader();
             contentServicesPage.checkColumnSizeHeader();
@@ -199,7 +204,6 @@ describe('Document List Component', () => {
         it('[C279928] Should be able to display date with timeAgo', async (done) => {
             await this.alfrescoJsApi.login(acsUser.id, acsUser.password);
             timeAgoUploadedNode = await uploadActions.uploadFile(this.alfrescoJsApi, timeAgoFileModel.location, timeAgoFileModel.name, '-my-');
-            loginPage.loginToContentServicesUsingUserModel(acsUser);
             contentServicesPage.goToDocumentList();
             let dateValue = contentServicesPage.getColumnValueForRow(timeAgoFileModel.name, 'Created');
             expect(dateValue).toContain('ago');
@@ -210,7 +214,6 @@ describe('Document List Component', () => {
             await this.alfrescoJsApi.login(acsUser.id, acsUser.password);
             mediumDateUploadedNode = await uploadActions.uploadFile(this.alfrescoJsApi, mediumFileModel.location, mediumFileModel.name, '-my-');
             let createdDate = moment(mediumDateUploadedNode.createdAt).format('ll');
-            loginPage.loginToContentServicesUsingUserModel(acsUser);
             contentServicesPage.goToDocumentList();
             contentServicesPage.enableMediumTimeFormat();
             let dateValue = contentServicesPage.getColumnValueForRow(mediumFileModel.name, 'Created');
@@ -493,11 +496,11 @@ describe('Document List Component', () => {
         });
 
         it('[C260108] Should display tooltip for file\'s name', () => {
-            expect(contentServicesPage.getContentList().dataTablePage().getTooltip(pdfFile.name)).toEqual(pdfFile.name);
+            expect(contentServicesPage.getContentList().dataTablePage().getTooltip('Display name', pdfFile.name)).toEqual(pdfFile.name);
         });
 
         it('[C260109] Should display tooltip for folder\'s name', () => {
-            expect(contentServicesPage.getContentList().dataTablePage().getTooltip(folderName)).toEqual(folderName);
+            expect(contentServicesPage.getContentList().dataTablePage().getTooltip('Display name', folderName)).toEqual(folderName);
         });
 
         it('[C260119] Should have a specific thumbnail for folders', async (done) => {

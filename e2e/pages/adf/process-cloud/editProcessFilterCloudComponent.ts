@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 import { Util } from '../../../util/util';
-import { by, element } from 'protractor';
+import { by, element, protractor } from 'protractor';
 import { EditProcessFilterDialog } from '../dialog/editProcessFilterDialog';
 
 export class EditProcessFilterCloudComponent {
 
     customiseFilter = element(by.id('adf-edit-process-filter-title-id'));
-    selectedOption = element(by.css('mat-option[class*="mat-selected"]'));
+    selectedOption = element.all(by.css('mat-option[class*="mat-selected"]')).first();
     saveAsButton = element(by.css('button[id="adf-save-as-id"]'));
 
     editProcessFilter = new EditProcessFilterDialog();
